@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>单基因狼疮预测模型</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+  <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+      <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+      <span class="fs-4">单基因狼疮预测模型</span>
+    </a>
+  </header>
+  <div class="container col-xl-10 col-xxl-8 px-4 py-5">
+    <div class="row align-items-center g-lg-5 py-5">
+      <div class="col-lg-7 text-center text-lg-start">
+        <h1 class="display-4 fw-bold lh-1 mb-3">单基因狼疮预测模型</h1>
+        <p class="col-lg-10 fs-3 fw-lighter">A LASSO Regression Machine Learning Model</p>
+        <p class="col-lg-10 fs-4" id="result"></p>
+        <p class="col-lg-10 fs-4" id="notice"></p>
+        <p class="col-lg-10 fs-6 lh-1 fw-light">Copyright © 张天誉 &nbsp;&nbsp;&nbsp;&nbsp;  Tech Support 高思豪</p>
+        <p class="col-lg-10 fs-6 lh-1 fw-light">中国医学科学院北京协和医院儿科</p>
+      </div>
+      <div class="col-md-10 mx-auto col-lg-5">
+        <form class="p-4 p-md-5 border rounded-3 bg-light" data-bitwarden-watching="1" id="regressionForm">
+          <div class="col-12 my-2">
+            <label for="age" class="form-label">起病年龄（岁）</label>
+            <input type="text" class="form-control" id="age" placeholder="请输入数字" required="">
+            <div class="invalid-feedback">
+              请输入正确的起病年龄
+            </div>
+          </div>
+          <div class="form-check my-2">
+            <input type="checkbox" class="form-check-input" id="recurrent" value="1">
+            <label class="form-check-label" for="recurrent">反复感染</label>
+          </div>
+          <div class="form-check my-2">
+            <input type="checkbox" class="form-check-input" id="intracranial" value="1">
+            <label class="form-check-label" for="intracranial">颅内钙化</label>
+          </div>
+          <div class="form-check my-2">
+            <input type="checkbox" class="form-check-input" id="growth" value="1">
+            <label class="form-check-label" for="growth">生长发育迟缓</label>
+          </div>
+          <div class="form-check my-2">
+            <input type="checkbox" class="form-check-input" id="dystonia" value="1">
+            <label class="form-check-label" for="dystonia">肌张力异常</label>
+          </div>
+          <div class="form-check my-2">
+            <input type="checkbox" class="form-check-input" id="lymphadenopathy" value="1">
+            <label class="form-check-label" for="lymphadenopathy">肝脾淋巴结肿大</label>
+          </div>
+          <div class="form-check my-2">
+            <input type="checkbox" class="form-check-input" id="chilblain" value="1">
+            <label class="form-check-label" for="chilblain">冻疮样皮疹</label>
+          </div>
+          <hr class="my-3">
+          <button class="w-100 btn btn-lg btn-primary" type="submit">模型计算</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  
+  <div id="result" class="result" style="display: none;"></div>
+  <script>
+    document.getElementById("regressionForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      var age = parseFloat(document.getElementById("age").value);
+      var recurrent = document.getElementById("recurrent").checked ? 1 : 0;
+      var intracranial = document.getElementById("intracranial").checked ? 1 : 0;
+      var growth = document.getElementById("growth").checked ? 1 : 0;
+      var dystonia = document.getElementById("dystonia").checked ? 1 : 0;
+      var lymphadenopathy = document.getElementById("lymphadenopathy").checked ? 1 : 0;
+      var chilblain = document.getElementById("chilblain").checked ? 1 : 0;
+
+      var score = 0.2906977 - (1.4124018 * age) + (15.2761768 * recurrent) + (7.5899250 * intracranial) + (3.5908622 * growth) + (3.0491924 * dystonia) + (1.1751209 * lymphadenopathy) + (1.2324701 * chilblain);
+
+      var prob = 1 / (1 + Math.exp(-score)) * 100;
+      if (prob > 76.6){
+        var notice = "单基因狼疮<b style='color:red;'>可能性大</b>"
+        notice_color = "red"
+      }else{
+        var notice = "单基因狼疮可能性不足"
+        notice_color = "black"
+      }
+
+      var resultElement = document.getElementById("result");
+      resultElement.style.display = "block";
+      resultElement.innerHTML = "单基因狼疮风险: <b style='color:" + notice_color + ";'>" + prob.toFixed(2) + "</b> %";
+      document.getElementById("notice").innerHTML = notice;
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>
